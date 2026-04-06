@@ -11,18 +11,22 @@ const API_BASE = '/api';
 function App() {
   const [appState, setAppState] = useState('idle'); // idle | thinking | complete | error
   const [activeNode, setActiveNode] = useState(null);
+  const [completedNodes, setCompletedNodes] = useState([]);
   const [outputContent, setOutputContent] = useState('');
   const [researchId, setResearchId] = useState(null);
   const [errorMessage, setErrorMessage] = useState('');
   const abortRef = useRef(null);
+  const activeNodeRef = useRef(null);
 
   const startResearch = useCallback(async (query) => {
     // Reset state
     setAppState('thinking');
     setOutputContent('');
     setActiveNode(null);
+    setCompletedNodes([]);
     setResearchId(null);
     setErrorMessage('');
+    activeNodeRef.current = null;
 
     // Abort any previous request
     if (abortRef.current) {
@@ -131,8 +135,13 @@ function App() {
         break;
 
       case 'AGENT_ACTIVE':
-        // Map node names to ProcessTracker node IDs
+        // When a new node becomes active, mark the previous one as completed
         if (data.node) {
+          if (activeNodeRef.current && activeNodeRef.current !== data.node) {
+            const prev = activeNodeRef.current;
+            setCompletedNodes(nodes => nodes.includes(prev) ? nodes : [...nodes, prev]);
+          }
+          activeNodeRef.current = data.node;
           setActiveNode(data.node);
         }
         break;
@@ -140,16 +149,26 @@ function App() {
       case 'SECTION_COMPLETE':
         // Keep parallel node active during section completion
         setActiveNode('parallel');
+        activeNodeRef.current = 'parallel';
         break;
 
       case 'AUDITOR_REVISION':
-        // Flash auditor, then switch back to parallel for revision
+        // Mark compiler done, flash auditor, then switch back to parallel for revision
+        setCompletedNodes(nodes => nodes.includes('compiler') ? nodes : [...nodes, 'compiler']);
         setActiveNode('auditor');
-        setTimeout(() => setActiveNode('parallel'), 1500);
+        activeNodeRef.current = 'auditor';
+        setTimeout(() => {
+          setCompletedNodes(nodes => nodes.includes('auditor') ? nodes : [...nodes, 'auditor']);
+          setActiveNode('parallel');
+          activeNodeRef.current = 'parallel';
+        }, 1500);
         break;
 
       case 'FINAL_DOC':
+        // Mark the last active node (auditor) as complete too
+        setCompletedNodes(['frontier', 'parallel', 'compiler', 'auditor']);
         setActiveNode(null);
+        activeNodeRef.current = null;
         setAppState('complete');
         setOutputContent(data.document || '');
         if (data.research_id) {
@@ -175,9 +194,11 @@ function App() {
     }
     setAppState('idle');
     setActiveNode(null);
+    setCompletedNodes([]);
     setOutputContent('');
     setResearchId(null);
     setErrorMessage('');
+    activeNodeRef.current = null;
   }, []);
 
   const handleDownloadPDF = useCallback(async () => {
@@ -250,6 +271,7 @@ function App() {
         <ProcessTracker
           status={appState === 'error' ? 'idle' : appState}
           activeNode={activeNode}
+          completedNodes={completedNodes}
         />
 
         {/* Output Terminal */}

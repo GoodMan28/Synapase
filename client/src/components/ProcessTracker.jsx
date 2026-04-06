@@ -7,7 +7,7 @@ const NODES = [
   { id: 'auditor', label: 'Auditor Loop', icon: '↻' },
 ];
 
-export default function ProcessTracker({ status = 'idle', activeNode = null }) {
+export default function ProcessTracker({ status = 'idle', activeNode = null, completedNodes = [] }) {
   const [animatedNodes, setAnimatedNodes] = useState([]);
 
   useEffect(() => {
@@ -17,7 +17,7 @@ export default function ProcessTracker({ status = 'idle', activeNode = null }) {
     }
 
     if (status === 'thinking') {
-      // Sequentially activate nodes
+      // Sequentially activate nodes for entrance animation
       const timers = NODES.map((node, i) =>
         setTimeout(() => {
           setAnimatedNodes(prev => [...prev, node.id]);
@@ -33,6 +33,9 @@ export default function ProcessTracker({ status = 'idle', activeNode = null }) {
 
   const getNodeState = (nodeId) => {
     if (status === 'idle') return 'idle';
+    // Individually completed nodes get 'completed' (green) state
+    if (completedNodes.includes(nodeId)) return 'node-done';
+    // Final overall complete
     if (status === 'complete') return 'complete';
     if (activeNode === nodeId) return 'active';
     if (animatedNodes.includes(nodeId)) return 'activated';
@@ -45,6 +48,7 @@ export default function ProcessTracker({ status = 'idle', activeNode = null }) {
       <div className="process-tracker__flow">
         {NODES.map((node, index) => {
           const state = getNodeState(node.id);
+          const isDone = state === 'node-done' || state === 'complete';
           return (
             <div key={node.id} className="process-tracker__step">
               {index > 0 && (
@@ -59,6 +63,7 @@ export default function ProcessTracker({ status = 'idle', activeNode = null }) {
                 <span className="process-tracker__node-icon">{node.icon}</span>
                 <span className="process-tracker__node-label">{node.label}</span>
                 {state === 'active' && <span className="process-tracker__pulse" />}
+                {isDone && <span className="process-tracker__done-badge">✓</span>}
               </div>
             </div>
           );

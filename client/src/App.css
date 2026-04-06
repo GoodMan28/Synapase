@@ -413,10 +413,56 @@
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.08);
 }
 
+/* ── INDIVIDUALLY COMPLETED NODE — green glow ── */
+.process-tracker__node.node-done {
+  opacity: 1;
+  background: rgba(0, 255, 136, 0.07);
+  border-color: rgba(0, 255, 136, 0.6);
+  box-shadow:
+    0 0 12px rgba(0, 255, 136, 0.25),
+    0 0 24px rgba(0, 255, 136, 0.08),
+    inset 0 0 8px rgba(0, 255, 136, 0.05);
+  transition: all var(--duration-normal) var(--ease-out);
+}
+
+.process-tracker__node.node-done .process-tracker__node-label {
+  color: rgba(0, 255, 136, 0.9);
+}
+
+.process-tracker__node.node-done .process-tracker__node-icon {
+  opacity: 0.75;
+  color: var(--accent-green);
+}
+
+.process-tracker__done-badge {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--accent-green);
+  background: rgba(0, 255, 136, 0.12);
+  border: 1px solid rgba(0, 255, 136, 0.35);
+  border-radius: var(--radius-full);
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  animation: badge-pop 0.3s var(--ease-out) forwards;
+}
+
+@keyframes badge-pop {
+  0% { transform: scale(0); opacity: 0; }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 .process-tracker__node.complete {
   opacity: 1;
-  background: var(--surface-container-high);
-  border-color: rgba(0, 255, 136, 0.3);
+  background: rgba(0, 255, 136, 0.07);
+  border-color: rgba(0, 255, 136, 0.6);
+  box-shadow:
+    0 0 12px rgba(0, 255, 136, 0.25),
+    0 0 24px rgba(0, 255, 136, 0.08);
 }
 
 .process-tracker__node-icon {
