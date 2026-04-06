@@ -7,6 +7,7 @@ Defines the multi-agent research pipeline:
 import json
 import logging
 import operator
+import random
 import uuid
 from typing import Annotated, Any, Literal
 
@@ -93,11 +94,14 @@ class ResearchState(TypedDict):
 
 
 def _get_llm() -> ChatGoogleGenerativeAI:
-    """Create a configured Gemini LLM instance."""
+    """Create a Gemini LLM instance using a randomly selected API key."""
     settings = get_settings()
+    keys = settings.api_keys
+    chosen_key = random.choice(keys)
+    logger.debug(f"[LLM] Using API key index {keys.index(chosen_key) + 1}/{len(keys)}")
     return ChatGoogleGenerativeAI(
         model=settings.GEMINI_MODEL,
-        google_api_key=settings.GOOGLE_API_KEY,
+        google_api_key=chosen_key,
         temperature=settings.GEMINI_TEMPERATURE,
         max_output_tokens=settings.GEMINI_MAX_OUTPUT_TOKENS,
     )

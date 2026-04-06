@@ -12,7 +12,9 @@ class Settings(BaseSettings):
     """Application settings loaded from environment variables / .env file."""
 
     # ── LLM ──
-    GOOGLE_API_KEY: str = Field(..., description="Google AI Studio API key for Gemini")
+    # Supports multiple keys separated by '|' for round-robin random selection.
+    # Example: GOOGLE_API_KEY=key1|key2|key3
+    GOOGLE_API_KEY: str = Field(..., description="Google AI Studio API key(s), pipe-separated")
     GEMINI_MODEL: str = Field(default="gemini-3.1-flash-lite-preview", description="Gemini model identifier")
     GEMINI_TEMPERATURE: float = Field(default=0.4, description="LLM temperature for generation")
     GEMINI_MAX_OUTPUT_TOKENS: int = Field(default=4096, description="Max output tokens per LLM call")
@@ -39,6 +41,11 @@ class Settings(BaseSettings):
         "env_file_encoding": "utf-8",
         "case_sensitive": True,
     }
+
+    @property
+    def api_keys(self) -> list[str]:
+        """Return the list of API keys parsed from the pipe-separated string."""
+        return [k.strip() for k in self.GOOGLE_API_KEY.split("|") if k.strip()]
 
 
 @lru_cache()
