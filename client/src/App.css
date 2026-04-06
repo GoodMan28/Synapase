@@ -716,6 +716,109 @@
   text-decoration-color: var(--primary);
 }
 
+/* ── NAV STATUS: ERROR ── */
+.app-nav__status-dot.error {
+  background: var(--accent-red);
+  animation: pulse-dot 1s ease-in-out infinite;
+}
+
+/* ── ERROR BANNER ── */
+.error-banner {
+  width: 100%;
+  max-width: 720px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md) var(--space-lg);
+  background: rgba(255, 68, 68, 0.08);
+  border: 1px solid rgba(255, 68, 68, 0.25);
+  border-radius: var(--radius-lg);
+  margin: var(--space-md) 0;
+  animation: terminal-appear 0.5s var(--ease-out) forwards;
+}
+
+.error-banner__icon {
+  font-size: 20px;
+  color: var(--accent-red);
+  flex-shrink: 0;
+}
+
+.error-banner__content {
+  flex: 1;
+}
+
+.error-banner__content strong {
+  display: block;
+  font-family: var(--font-tech);
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: var(--accent-red);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.error-banner__content p {
+  font-size: 13px;
+  color: var(--on-surface-variant);
+  line-height: 1.5;
+}
+
+.error-banner__retry {
+  flex-shrink: 0;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1px solid rgba(255, 68, 68, 0.3);
+  border-radius: var(--radius-md);
+  color: var(--accent-red);
+  font-family: var(--font-tech);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.error-banner__retry:hover {
+  background: rgba(255, 68, 68, 0.12);
+  border-color: rgba(255, 68, 68, 0.5);
+}
+
+/* ── PDF DOWNLOAD ── */
+.pdf-download-wrapper {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-md) 0;
+}
+
+.pdf-download-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 10px 24px;
+  background: var(--surface-container);
+  border: 1px solid var(--outline-variant);
+  border-radius: var(--radius-full);
+  color: var(--on-surface);
+  font-family: var(--font-tech);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  cursor: pointer;
+  transition: all var(--duration-fast) var(--ease-out);
+}
+
+.pdf-download-btn:hover {
+  background: var(--surface-container-high);
+  border-color: var(--outline);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.06);
+  transform: translateY(-1px);
+}
+
+.pdf-download-btn:active {
+  transform: translateY(0);
+}
+
 /* ── FOOTER ── */
 .app-footer {
   width: 100%;
@@ -778,5 +881,10 @@
 
   .output-terminal__content {
     padding: var(--space-md);
+  }
+
+  .error-banner {
+    flex-direction: column;
+    text-align: center;
   }
 }
